@@ -362,14 +362,3 @@ Long term, I want this to grow into something much bigger:
 - VS Code integration
 
 The bigger dream is a system that does for algorithm behavior what an X-ray does for anatomy: reveal the structure underneath what you can already see.
-
-## Notes
-
-The original product direction, feature planning, and implementation framing live in:
-
-- [CODEX_RAY_PRD.md](/Users/likhithabattu/Documents/Personal%20Projects/CodeX-Ray/CODEX_RAY_PRD.md)
-- [CODEX_IMPLEMENTATION_PROMPT.md](/Users/likhithabattu/Documents/Personal%20Projects/CodeX-Ray/CODEX_IMPLEMENTATION_PROMPT.md)
-
-If you are looking at this repo as a recruiter, judge, collaborator, or engineer, the most important thing to know is this:
-
-This project is meant to be both technically ambitious and deeply product-driven.
