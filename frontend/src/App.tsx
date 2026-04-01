@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type MouseEvent } from "react";
 import { analyzeSource, compareSources, fetchExamples } from "./lib/api";
 import type { AnalysisResult, CompareResult, ExampleSnippet, InputConfig } from "./lib/types";
 import { CodePanel } from "./components/CodePanel";
@@ -86,6 +86,22 @@ function complexitySeverity(timeComplexity?: string): number {
   return 0.28;
 }
 
+function complexityFamily(timeComplexity?: string): "constant" | "log" | "linear" | "quadratic" {
+  if (!timeComplexity) {
+    return "linear";
+  }
+  if (timeComplexity.includes("n^2") || timeComplexity.includes("n²") || timeComplexity.includes("2^n")) {
+    return "quadratic";
+  }
+  if (timeComplexity.includes("log n")) {
+    return "log";
+  }
+  if (timeComplexity.includes("1")) {
+    return "constant";
+  }
+  return "linear";
+}
+
 function formatNValue(value: number): string {
   return value.toLocaleString();
 }
@@ -160,6 +176,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [explanationMode, setExplanationMode] = useState<"concise" | "teaching">("teaching");
   const [traceIndex, setTraceIndex] = useState(0);
+  const [heroPointer, setHeroPointer] = useState({ x: 0.5, y: 0.5 });
 
   useEffect(() => {
     void fetchExamples()
@@ -236,6 +253,20 @@ export default function App() {
     }
   }
 
+  function handleHeroVisualMove(event: MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    setHeroPointer({
+      x: Math.max(0, Math.min(1, x)),
+      y: Math.max(0, Math.min(1, y)),
+    });
+  }
+
+  function resetHeroVisualMove() {
+    setHeroPointer({ x: 0.5, y: 0.5 });
+  }
+
   const displayAnalysis = compareMode && compareResult ? compareResult.left : analysis;
   const highlightedPrimaryLines = displayAnalysis?.hotspots.map((item) => item.line) ?? [];
   const highlightedCompareLines = compareResult?.right.hotspots.map((item) => item.line) ?? [];
@@ -262,6 +293,11 @@ export default function App() {
     "--bottleneck-release-width": bottleneckReleaseWidth,
     "--bottleneck-flow-opacity": `${0.66 + (displayAnalysis?.complexity.confidence ?? 0.4) * 0.24}`,
   } as CSSProperties;
+  const activeComplexityFamily = complexityFamily(displayAnalysis?.complexity.time);
+  const heroVisualStyle = {
+    "--pointer-x": heroPointer.x.toFixed(3),
+    "--pointer-y": heroPointer.y.toFixed(3),
+  } as CSSProperties;
 
   return (
     <div className="app-shell">
@@ -284,6 +320,35 @@ export default function App() {
         <div className="hero-copy-block">
           <p className="eyebrow">Algorithm Observatory</p>
           <h1>See what your code becomes as it scales.</h1>
+          <div className="hero-code-visual" aria-hidden="true">
+            <div className="code-card">
+              <div className="code-card-top">
+                <span className="code-dot coral-dot" />
+                <span className="code-dot blue-dot" />
+                <span className="code-dot aqua-dot" />
+              </div>
+              <div className="code-stage">
+                <div className="code-lines">
+                  <span className="code-line code-line-1">def fib(n):</span>
+                  <span className="code-line code-line-2">    if n &lt;= 1:</span>
+                  <span className="code-line code-line-3">        return n</span>
+                  <span className="code-line code-line-4">    return fib(n - 1) + fib(n - 2)</span>
+                </div>
+                <div className="scan-lens">
+                  <div className="scan-lens-glass">
+                    <div className="lens-zoom-surface">
+                      <span className="lens-source-line lens-source-line-1">def fib(n):</span>
+                      <span className="lens-source-line lens-source-line-2">if n &lt;= 1:</span>
+                      <span className="lens-source-line lens-source-line-3">return n</span>
+                      <span className="lens-source-line lens-source-line-4">return fib(n - 1) + fib(n - 2)</span>
+                    </div>
+                  </div>
+                  <div className="scan-lens-handle" />
+                </div>
+                <div className="code-pressure-line" />
+              </div>
+            </div>
+          </div>
           <p className="hero-copy">
             CodeX-Ray turns algorithms into something you can inspect visually: execution, growth, hotspots,
             tradeoffs, and structural behavior all in one place.
@@ -317,6 +382,59 @@ export default function App() {
                 <div className="hero-metric">
                   <span>Analysis nodes</span>
                   <strong>{heroNodeCount}</strong>
+                </div>
+              </div>
+              <div className="live-xray-mini">
+                <div className="live-xray-grid" />
+                <div className="live-xray-plot">
+                  <div className="live-xray-plot-head">
+                    <span>Growth curve</span>
+                    <strong>{displayAnalysis?.complexity.time ?? "O(n)"}</strong>
+                  </div>
+                  <svg viewBox="0 0 260 170" className="live-xray-graph" aria-hidden="true">
+                    <line x1="26" y1="18" x2="26" y2="144" className="mini-axis" />
+                    <line x1="26" y1="144" x2="238" y2="144" className="mini-axis" />
+                    <path
+                      d="M 26 118 L 238 118"
+                      className={`mini-curve mini-constant ${activeComplexityFamily === "constant" ? "is-active" : ""}`}
+                    />
+                    <path d="M 26 118 L 238 118" className="mini-curve-tracer mini-constant-tracer" />
+                    <path
+                      d="M 26 144 C 54 118, 90 102, 238 94"
+                      className={`mini-curve mini-log ${activeComplexityFamily === "log" ? "is-active" : ""}`}
+                    />
+                    <path d="M 26 144 C 54 118, 90 102, 238 94" className="mini-curve-tracer mini-log-tracer" />
+                    <path
+                      d="M 26 144 L 238 56"
+                      className={`mini-curve mini-linear ${activeComplexityFamily === "linear" ? "is-active" : ""}`}
+                    />
+                    <path d="M 26 144 L 238 56" className="mini-curve-tracer mini-linear-tracer" />
+                    <path
+                      d="M 26 144 C 72 142, 108 126, 128 88 C 142 58, 152 14, 158 -18"
+                      className={`mini-curve mini-quadratic ${activeComplexityFamily === "quadratic" ? "is-active" : ""}`}
+                    />
+                    <path
+                      d="M 26 144 C 72 142, 108 126, 128 88 C 142 58, 152 14, 158 -18"
+                      className="mini-curve-tracer mini-quadratic-tracer"
+                    />
+                    <text x="202" y="116" className="mini-label-text mini-constant-label">
+                      O(1)
+                    </text>
+                    <text x="198" y="92" className="mini-label-text mini-log-label">
+                      O(log n)
+                    </text>
+                    <text x="198" y="58" className="mini-label-text mini-linear-label">
+                      O(n)
+                    </text>
+                    <text x="104" y="28" className="mini-label-text mini-quadratic-label">
+                      O(n^2)
+                    </text>
+                  </svg>
+                </div>
+                <div className="live-xray-scanline" />
+                <div className="live-xray-footer">
+                  <span>{displayAnalysis?.complexity.time ?? "--"}</span>
+                  <span>{displayAnalysis?.complexity.space ?? "--"} space</span>
                 </div>
               </div>
             </div>
@@ -368,35 +486,69 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="hero-controls hero-story-card">
-          <p className="eyebrow">What this unlocks</p>
-          <h2>Run it once. See what is slow. Know what to fix.</h2>
-          <p className="hero-copy">
-            The point is to make performance feel less fuzzy. You should be able to spot the expensive part, understand
-            how it grows, and decide whether a rewrite is actually worth your time.
-          </p>
-          <div className="story-stat-grid">
-            <article>
-              <strong>{displayAnalysis?.hotspots[0]?.line ? `Line ${displayAnalysis.hotspots[0].line}` : "Hotspots"}</strong>
-              <span>
-                {displayAnalysis?.hotspots[0]?.reason ?? "Find the exact region that dominates runtime first."}
-              </span>
-            </article>
-            <article>
-              <strong>{displayAnalysis?.complexity.time ?? "Growth risk"}</strong>
-              <span>
-                {displayAnalysis
-                  ? `Current structure suggests ${displayAnalysis.complexity.time} time and ${displayAnalysis.complexity.space} space.`
-                  : "Understand how the implementation behaves before scaling it."}
-              </span>
-            </article>
-            <article>
-              <strong>{displayAnalysis?.suggestions.length ? "Next move" : "Optimization"}</strong>
-              <span>
-                {displayAnalysis?.suggestions[0]?.title ??
-                  "Get specific rewrite ideas instead of generic “optimize this” advice."}
-              </span>
-            </article>
+        <div className="hero-side-column">
+          <div className="hero-controls hero-story-card">
+            <p className="eyebrow">What this unlocks</p>
+            <h2>Run it once. See what is slow. Know what to fix.</h2>
+            <p className="hero-copy">
+              The point is to make performance feel less fuzzy. You should be able to spot the expensive part, understand
+              how it grows, and decide whether a rewrite is actually worth your time.
+            </p>
+            <div className="story-stat-grid">
+              <article>
+                <strong>{displayAnalysis?.hotspots[0]?.line ? `Line ${displayAnalysis.hotspots[0].line}` : "Hotspots"}</strong>
+                <span>
+                  {displayAnalysis?.hotspots[0]?.reason ?? "Find the exact region that dominates runtime first."}
+                </span>
+              </article>
+              <article>
+                <strong>{displayAnalysis?.complexity.time ?? "Growth risk"}</strong>
+                <span>
+                  {displayAnalysis
+                    ? `Current structure suggests ${displayAnalysis.complexity.time} time and ${displayAnalysis.complexity.space} space.`
+                    : "Understand how the implementation behaves before scaling it."}
+                </span>
+              </article>
+              <article>
+                <strong>{displayAnalysis?.suggestions.length ? "Next move" : "Optimization"}</strong>
+                <span>
+                  {displayAnalysis?.suggestions[0]?.title ??
+                    "Get specific rewrite ideas instead of generic “optimize this” advice."}
+                </span>
+              </article>
+            </div>
+          </div>
+
+          <div
+            className="hero-optimization-visual"
+            aria-hidden="true"
+            style={heroVisualStyle}
+            onMouseMove={handleHeroVisualMove}
+            onMouseLeave={resetHeroVisualMove}
+          >
+            <div className="optimization-orb-field">
+              <div className="orb-grid" />
+              <div className="orb-glow orb-glow-warm" />
+              <div className="orb-glow orb-glow-cool" />
+              <div className="orb-cluster">
+                <span className="blob blob-core" />
+                <span className="blob blob-top" />
+                <span className="blob blob-left" />
+                <span className="blob blob-right" />
+                <span className="blob blob-bottom" />
+                <span className="blob-dot dot-a" />
+                <span className="blob-dot dot-b" />
+                <span className="blob-dot dot-c" />
+                <span className="blob-dot dot-d" />
+              </div>
+
+              <span className="idea-chip chip-left-top">hotspot</span>
+              <span className="idea-chip chip-left-mid">growth risk</span>
+              <span className="idea-chip chip-left-bottom">pressure</span>
+              <span className="idea-chip chip-right-top">rewrite</span>
+              <span className="idea-chip chip-right-mid">compare</span>
+              <span className="idea-chip chip-right-bottom">clearer path</span>
+            </div>
           </div>
         </div>
       </header>
