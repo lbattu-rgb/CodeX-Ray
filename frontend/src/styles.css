@@ -554,6 +554,7 @@ a {
 .hero-metric-row,
 .scan-footer,
 .story-stat-grid,
+.demo-flow-grid,
 .summary-strip,
 .story-grid,
 .chart-grid-layout,
@@ -748,7 +749,8 @@ a {
 
 .hero-metric,
 .scan-footer-metric,
-.story-stat-grid article {
+.story-stat-grid article,
+.demo-flow-grid article {
   padding: 14px;
   border-radius: 20px;
   background: rgba(249, 252, 255, 0.88);
@@ -757,7 +759,8 @@ a {
 
 .hero-metric span,
 .scan-footer-metric span,
-.story-stat-grid span {
+.story-stat-grid span,
+.demo-flow-grid span {
   display: block;
   margin-bottom: 8px;
   color: #7c8ba4;
@@ -768,7 +771,8 @@ a {
 
 .hero-metric strong,
 .scan-footer-metric strong,
-.story-stat-grid strong {
+.story-stat-grid strong,
+.demo-flow-grid strong {
   color: #22324c;
   font-size: 1.2rem;
 }
@@ -879,6 +883,11 @@ a {
 }
 
 .story-stat-grid {
+  grid-template-columns: 1fr;
+  margin-top: 20px;
+}
+
+.demo-flow-grid {
   grid-template-columns: 1fr;
   margin-top: 20px;
 }

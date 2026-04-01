@@ -488,32 +488,29 @@ export default function App() {
         </div>
         <div className="hero-side-column">
           <div className="hero-controls hero-story-card">
-            <p className="eyebrow">What this unlocks</p>
-            <h2>Run it once. See what is slow. Know what to fix.</h2>
+            <p className="eyebrow">Best Demo Flow</p>
+            <h2>Start with bad code. Show the hotspot. Rewrite one thing. Watch the pressure change.</h2>
             <p className="hero-copy">
-              The point is to make performance feel less fuzzy. You should be able to spot the expensive part, understand
-              how it grows, and decide whether a rewrite is actually worth your time.
+              The fastest way to understand CodeX-Ray is to use it like a before-and-after machine. Show a naive
+              implementation first, then make one better choice and let the product explain the difference.
             </p>
-            <div className="story-stat-grid">
+            <div className="demo-flow-grid">
               <article>
-                <strong>{displayAnalysis?.hotspots[0]?.line ? `Line ${displayAnalysis.hotspots[0].line}` : "Hotspots"}</strong>
+                <strong>1. Paste the naive version</strong>
                 <span>
-                  {displayAnalysis?.hotspots[0]?.reason ?? "Find the exact region that dominates runtime first."}
+                  Use something like nested-loop `two_sum` or duplicate detection so the hotspot is obvious.
                 </span>
               </article>
               <article>
-                <strong>{displayAnalysis?.complexity.time ?? "Growth risk"}</strong>
+                <strong>2. Show where it gets bad</strong>
                 <span>
-                  {displayAnalysis
-                    ? `Current structure suggests ${displayAnalysis.complexity.time} time and ${displayAnalysis.complexity.space} space.`
-                    : "Understand how the implementation behaves before scaling it."}
+                  Point to the bottleneck, the growth curve, and the `gets risky at n = ...` warning.
                 </span>
               </article>
               <article>
-                <strong>{displayAnalysis?.suggestions.length ? "Next move" : "Optimization"}</strong>
+                <strong>3. Rewrite one thing</strong>
                 <span>
-                  {displayAnalysis?.suggestions[0]?.title ??
-                    "Get specific rewrite ideas instead of generic “optimize this” advice."}
+                  Swap the pattern, re-run, and let the hotspot visual, threshold, and complexity shift sell the story.
                 </span>
               </article>
             </div>
