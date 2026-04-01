@@ -275,90 +275,124 @@ export default function App() {
           </div>
         </div>
         <div className="hero-controls hero-story-card">
-          <p className="eyebrow">What makes this different</p>
-          <h2>Not a visualizer. Not a profiler. Not a tutor. All three talking to each other.</h2>
+          <p className="eyebrow">Scroll trigger</p>
+          <h2>A homepage that moves like a story, then hands you the lab.</h2>
           <p className="hero-copy">
-            The point of CodeX-Ray is to bridge the gap between code execution, algorithm understanding, and
-            performance intuition. It should feel like a product you move through, not a single chart dumped on a page.
+            The front of the site should feel guided and cinematic. The deeper you go, the more it shifts from big
+            idea to actual working instrumentation.
           </p>
           <div className="story-stat-grid">
             <article>
-              <strong>Trace</strong>
-              <span>line-by-line execution with stack state</span>
+              <strong>Reveal</strong>
+              <span>scroll-led chapters instead of flat feature blurbs</span>
             </article>
             <article>
-              <strong>Growth</strong>
-              <span>projected runtime and memory across input sizes</span>
+              <strong>Motion</strong>
+              <span>panels, type, and visuals that enter with intention</span>
             </article>
             <article>
-              <strong>Compare</strong>
-              <span>implementation-level tradeoff exploration</span>
+              <strong>Depth</strong>
+              <span>website-first pacing before the analysis workspace begins</span>
             </article>
           </div>
         </div>
       </header>
 
-      <div className="curve-divider reveal-on-scroll" aria-hidden="true">
-        <div className="curve-divider-track" />
-        <div className="curve-divider-orb orb-left" />
-        <div className="curve-divider-orb orb-right" />
-      </div>
-
-      <section className="story-section reveal-on-scroll" id="story">
-        <div className="section-intro">
-          <p className="eyebrow">Experience</p>
-          <h2>Built like a site you explore, not a single dashboard you glance at.</h2>
+      <section className="kinetic-band reveal-on-scroll" aria-hidden="true">
+        <div className="kinetic-track">
+          <span>TRACE</span>
+          <span>REVEAL</span>
+          <span>SCALE</span>
+          <span>COMPARE</span>
+          <span>PRESSURE</span>
+          <span>SIMULATE</span>
+          <span>TRACE</span>
+          <span>REVEAL</span>
+          <span>SCALE</span>
+          <span>COMPARE</span>
         </div>
-        <div className="story-grid">
-          <article className="story-card coral-card split-card">
-            <div className="story-copy-block">
-              <span className="story-kicker">Sectioned flow</span>
-              <h3>Move from idea to analysis to explanation.</h3>
-              <p>
-                The layout is split into a narrative landing section, a working code lab, and a results system so the
-                product feels guided instead of flat.
-              </p>
+      </section>
+
+      <section className="story-drive" id="story">
+        <div className="section-intro reveal-on-scroll">
+          <p className="eyebrow">Story drive</p>
+          <h2>Scroll through the moments where an algorithm stops being invisible.</h2>
+        </div>
+
+        <div className="chapter-shell">
+          <div className="chapter-stage reveal-on-scroll">
+            <div className="stage-frame">
+              <div className="stage-grid" />
+              <div className="stage-glow stage-glow-one" />
+              <div className="stage-glow stage-glow-two" />
+              <div className="stage-header">
+                <div>
+                  <p className="eyebrow">Live scan surface</p>
+                  <h3>CodeX-Ray Story Mode</h3>
+                </div>
+                <span className="scan-chip">Interactive</span>
+              </div>
+
+              <div className="stage-ribbons">
+                <span className="stage-ribbon ribbon-a">Execution path</span>
+                <span className="stage-ribbon ribbon-b">Growth pressure</span>
+                <span className="stage-ribbon ribbon-c">Hotspot dominance</span>
+              </div>
+
+              <div className="stage-footer-grid">
+                <article>
+                  <span>Current read</span>
+                  <strong>{displayAnalysis?.complexity.time ?? "Awaiting scan"}</strong>
+                </article>
+                <article>
+                  <span>Trace frames</span>
+                  <strong>{heroTraceSteps}</strong>
+                </article>
+                <article>
+                  <span>Pressure lines</span>
+                  <strong>{displayAnalysis?.hotspots.length ?? 0}</strong>
+                </article>
+              </div>
             </div>
-            <div className="story-visual visual-wave">
-              <span className="visual-pill pill-one" />
-              <span className="visual-pill pill-two" />
-              <span className="visual-curve curve-one" />
-            </div>
-          </article>
-          <article className="story-card aqua-card split-card reverse-card">
-            <div className="story-copy-block">
-              <span className="story-kicker">Fresh palette</span>
-              <h3>Light, vivid, and more inviting.</h3>
-              <p>
-                The visual direction shifts away from the heavy dark console look and into something brighter, more
-                modern, and more memorable.
-              </p>
-            </div>
-            <div className="story-visual visual-columns">
-              <span className="visual-column short" />
-              <span className="visual-column medium" />
-              <span className="visual-column tall" />
-              <span className="visual-column medium" />
-              <span className="visual-column short" />
-            </div>
-          </article>
-          <article className="story-card sand-card split-card">
-            <div className="story-copy-block">
-              <span className="story-kicker">Shapes and rhythm</span>
-              <h3>Asymmetry, curves, and stronger scroll pacing.</h3>
-              <p>
-                Cards, callouts, and visual clusters create real movement through the page, which makes the product feel
-                much more like a polished website.
-              </p>
-            </div>
-            <div className="story-visual visual-constellation">
-              <span className="visual-node node-a" />
-              <span className="visual-node node-b" />
-              <span className="visual-node node-c" />
-              <span className="visual-arc arc-one" />
-              <span className="visual-arc arc-two" />
-            </div>
-          </article>
+          </div>
+
+          <div className="chapter-stack">
+            <article className="chapter-card reveal-on-scroll chapter-card-primary">
+              <span className="chapter-index">01</span>
+              <div className="chapter-copy">
+                <p className="chapter-kicker">Freeze the code</p>
+                <h3>Execution should arrive like a scene, not a dump of numbers.</h3>
+                <p>
+                  As you scroll into the product, the page should already be teaching the user how CodeX-Ray thinks:
+                  what line fired, where pressure builds, and why the next moment matters.
+                </p>
+              </div>
+            </article>
+
+            <article className="chapter-card reveal-on-scroll chapter-card-secondary">
+              <span className="chapter-index">02</span>
+              <div className="chapter-copy">
+                <p className="chapter-kicker">Show the buildup</p>
+                <h3>Runtime and memory should feel like motion gathering force.</h3>
+                <p>
+                  The graphs, cards, and transitions need to imply acceleration, branching, and load, so the site feels
+                  alive before the user even presses Analyze.
+                </p>
+              </div>
+            </article>
+
+            <article className="chapter-card reveal-on-scroll chapter-card-tertiary">
+              <span className="chapter-index">03</span>
+              <div className="chapter-copy">
+                <p className="chapter-kicker">Turn into a workspace</p>
+                <h3>After the cinematic part, the site has to land cleanly in the actual tool.</h3>
+                <p>
+                  That transition matters. The homepage earns attention with rhythm and motion, then hands the user a
+                  serious code lab without feeling like a different product.
+                </p>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
