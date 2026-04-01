@@ -8,6 +8,11 @@ type SimulationChartProps = {
   xValues: number[];
   color: string;
   suffix: string;
+  annotation?: {
+    index: number;
+    label: string;
+    detail: string;
+  };
 };
 
 function linePath(xValues: number[], values: number[], width: number, height: number): string {
@@ -26,7 +31,7 @@ function easeInOutCubic(value: number): number {
   return 1 - Math.pow(-2 * value + 2, 3) / 2;
 }
 
-export function SimulationChart({ title, values, xValues, color, suffix }: SimulationChartProps) {
+export function SimulationChart({ title, values, xValues, color, suffix, annotation }: SimulationChartProps) {
   const width = 360;
   const height = 180;
   const [progress, setProgress] = useState(0);
@@ -123,7 +128,30 @@ export function SimulationChart({ title, values, xValues, color, suffix }: Simul
             </g>
           );
         })}
+        {annotation ? (
+          <g className="chart-annotation">
+            <line
+              x1={xScale(annotation.index)}
+              x2={xScale(annotation.index)}
+              y1="24"
+              y2={height - 20}
+              className="chart-annotation-line"
+            />
+            <circle
+              cx={xScale(annotation.index)}
+              cy={yScale(values[annotation.index] ?? 0)}
+              r="7"
+              className="chart-annotation-dot"
+            />
+          </g>
+        ) : null}
       </svg>
+      {annotation ? (
+        <div className="chart-annotation-copy">
+          <strong>{annotation.label}</strong>
+          <span>{annotation.detail}</span>
+        </div>
+      ) : null}
       <div className="chart-axis">
         {xValues.map((n) => (
           <span key={`${title}-x-${n}`}>n={n}</span>
@@ -143,9 +171,14 @@ export function SimulationChart({ title, values, xValues, color, suffix }: Simul
 
 type SimulationDeckProps = {
   simulation: SimulationSeries;
+  runtimeAnnotation?: {
+    index: number;
+    label: string;
+    detail: string;
+  };
 };
 
-export function SimulationDeck({ simulation }: SimulationDeckProps) {
+export function SimulationDeck({ simulation, runtimeAnnotation }: SimulationDeckProps) {
   return (
     <div className="chart-grid-layout">
       <SimulationChart
@@ -154,6 +187,7 @@ export function SimulationDeck({ simulation }: SimulationDeckProps) {
         xValues={simulation.n_values}
         color="#ff7a18"
         suffix="ms"
+        annotation={runtimeAnnotation}
       />
       <SimulationChart
         title="Memory Growth"

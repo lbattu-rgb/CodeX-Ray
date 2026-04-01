@@ -226,6 +226,13 @@ a {
   padding: 22px;
 }
 
+.section-intro.with-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 420px);
+  gap: 22px;
+  align-items: center;
+}
+
 .hero-controls {
   background:
     radial-gradient(circle at bottom right, rgba(127, 174, 255, 0.18), transparent 24%),
@@ -269,7 +276,8 @@ a {
 .metric-card span,
 .hero-summary-copy,
 .story-card p,
-.site-footer p {
+.site-footer p,
+.section-support-copy {
   color: #65748f;
   line-height: 1.65;
 }
@@ -480,6 +488,149 @@ a {
   font-size: clamp(2rem, 5vw, 3.4rem);
   line-height: 1.02;
   margin-top: 10px;
+}
+
+.section-support-copy {
+  max-width: 56ch;
+  margin: 18px 0 0;
+}
+
+.bottleneck-visual {
+  position: relative;
+  min-height: 280px;
+  border-radius: 30px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 189, 165, 0.28), transparent 24%),
+    radial-gradient(circle at 88% 80%, rgba(127, 168, 255, 0.24), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(249, 252, 255, 0.92));
+  border: 1px solid rgba(223, 229, 238, 0.92);
+}
+
+.bottleneck-glow {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  filter: blur(24px);
+  opacity: 0.5;
+}
+
+.bottleneck-glow-left {
+  top: -22px;
+  left: -12px;
+  background: rgba(255, 193, 167, 0.52);
+}
+
+.bottleneck-glow-right {
+  right: -10px;
+  bottom: -22px;
+  background: rgba(140, 236, 224, 0.42);
+}
+
+.bottleneck-shell {
+  position: absolute;
+  inset: 18px;
+  border-radius: 26px;
+  background:
+    linear-gradient(rgba(215, 224, 239, 0.42) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(215, 224, 239, 0.42) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.52);
+  background-size: 26px 26px, 26px 26px, auto;
+  --bottleneck-neck-width: 9%;
+  --bottleneck-release-width: 18%;
+  --bottleneck-flow-opacity: 0.78;
+}
+
+.bottleneck-shape,
+.bottleneck-flow {
+  position: absolute;
+  inset: 0;
+}
+
+.shape-wide,
+.shape-neck,
+.shape-release {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.shape-wide {
+  left: 8%;
+  width: 56%;
+  height: 118px;
+  border-radius: 999px 44px 44px 999px;
+  background: linear-gradient(90deg, rgba(143, 236, 224, 0.28), rgba(127, 168, 255, 0.18));
+  box-shadow:
+    inset 0 0 0 1px rgba(144, 196, 235, 0.28),
+    0 16px 40px rgba(127, 168, 255, 0.1);
+  clip-path: polygon(0 0, 84% 0, 94% 16%, 94% 84%, 84% 100%, 0 100%);
+}
+
+.shape-neck {
+  left: 62.5%;
+  width: var(--bottleneck-neck-width);
+  height: 34px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, rgba(120, 174, 241, 0.82), rgba(104, 223, 210, 0.78));
+  box-shadow: 0 0 18px rgba(111, 187, 236, 0.35);
+}
+
+.shape-release {
+  left: 71.5%;
+  width: var(--bottleneck-release-width);
+  height: 72px;
+  border-radius: 18px 999px 999px 18px;
+  background: linear-gradient(90deg, rgba(181, 208, 255, 0.34), rgba(143, 236, 224, 0.3));
+  clip-path: polygon(0 28%, 88% 28%, 100% 50%, 88% 72%, 0 72%);
+}
+
+.flow-dot {
+  position: absolute;
+  top: calc(50% - 7px + var(--offset));
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 14px rgba(127, 168, 255, 0.16);
+  will-change: transform, opacity;
+  filter: saturate(1.05);
+}
+
+.flow-dot-left {
+  left: 10%;
+  animation: bottleneck-left 5.8s linear infinite;
+  animation-delay: var(--delay);
+}
+
+.flow-dot-neck {
+  left: 63%;
+  background: rgba(49, 122, 255, 0.95);
+  animation: bottleneck-neck 5.8s linear infinite;
+  animation-delay: var(--delay);
+}
+
+.flow-dot-right {
+  left: 72%;
+  animation: bottleneck-right 5.8s linear infinite;
+  animation-delay: var(--delay);
+}
+
+.flow-dot.tone-1 {
+  background: #7fa8ff;
+}
+
+.flow-dot.tone-2 {
+  background: #8cece0;
+}
+
+.flow-dot.tone-3 {
+  background: #ffb79a;
+}
+
+.bottleneck-flow .flow-dot {
+  opacity: var(--bottleneck-flow-opacity);
 }
 
 .kinetic-band {
@@ -940,6 +1091,42 @@ a {
   opacity: 1;
 }
 
+.chart-annotation-line {
+  stroke: rgba(223, 118, 52, 0.9);
+  stroke-width: 2;
+  stroke-dasharray: 6 8;
+}
+
+.chart-annotation-dot {
+  fill: #ff7a18;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 10px rgba(255, 122, 24, 0.35));
+}
+
+.chart-annotation-copy {
+  margin: 2px 0 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 245, 238, 0.88);
+  border: 1px solid rgba(255, 212, 188, 0.9);
+}
+
+.chart-annotation-copy strong,
+.scale-warning-copy p:first-child {
+  color: #22324c;
+}
+
+.chart-annotation-copy strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.chart-annotation-copy span {
+  color: #6a7893;
+  line-height: 1.55;
+}
+
 .chart-axis span,
 .chart-values span {
   color: #677791;
@@ -948,6 +1135,23 @@ a {
 .warning-chip {
   background: rgba(255, 223, 207, 0.92);
   color: #b66947;
+}
+
+.scale-warning-panel {
+  background:
+    radial-gradient(circle at top right, rgba(255, 190, 166, 0.24), transparent 22%),
+    rgba(255, 255, 255, 0.82);
+}
+
+.scale-warning-copy {
+  display: grid;
+  gap: 12px;
+}
+
+.scale-warning-copy p {
+  margin: 0;
+  color: #65748f;
+  line-height: 1.7;
 }
 
 .dna-grid {
@@ -1052,6 +1256,68 @@ a {
   }
 }
 
+@keyframes bottleneck-left {
+  0% {
+    transform: translateX(0) scale(0.7);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(210px) scale(0.82);
+    opacity: 0;
+  }
+}
+
+@keyframes bottleneck-neck {
+  0%,
+  20% {
+    transform: translateX(0) scale(0.52);
+    opacity: 0;
+  }
+
+  26% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(44px) scale(0.48);
+    opacity: 0;
+  }
+}
+
+@keyframes bottleneck-right {
+  0%,
+  24% {
+    transform: translateX(0) scale(0.78);
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(84px) scale(0.9);
+    opacity: 0;
+  }
+}
+
 @media (max-width: 1100px) {
   .hero,
   .hero-scan-summary,
@@ -1060,7 +1326,8 @@ a {
   .editor-grid.compare,
   .content-grid,
   .site-footer,
-  .chapter-shell {
+  .chapter-shell,
+  .section-intro.with-panel {
     grid-template-columns: 1fr;
   }
 
@@ -1073,6 +1340,10 @@ a {
   .chapter-stage {
     position: relative;
     top: auto;
+  }
+
+  .bottleneck-visual {
+    min-height: 240px;
   }
 }
 

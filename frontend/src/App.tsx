@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { analyzeSource, compareSources, fetchExamples } from "./lib/api";
 import type { AnalysisResult, CompareResult, ExampleSnippet, InputConfig } from "./lib/types";
 import { CodePanel } from "./components/CodePanel";
@@ -61,6 +61,87 @@ function deltaText(previous: AnalysisResult | null, current: AnalysisResult | nu
     previous.simulation.runtime_estimated_ms[previous.simulation.runtime_estimated_ms.length - 1] ?? 0;
   const runtimeDelta = currentRuntime - previousRuntime;
   return `Time complexity moved from ${previous.complexity.time} to ${current.complexity.time}. Projected large-n runtime changed by ${runtimeDelta.toFixed(2)}ms.`;
+}
+
+function complexitySeverity(timeComplexity?: string): number {
+  if (!timeComplexity) {
+    return 0.38;
+  }
+
+  if (timeComplexity.includes("2^n") || timeComplexity.includes("n!")) {
+    return 1;
+  }
+  if (timeComplexity.includes("n^2") || timeComplexity.includes("n²")) {
+    return 0.82;
+  }
+  if (timeComplexity.includes("n log n")) {
+    return 0.62;
+  }
+  if (timeComplexity.includes("log n")) {
+    return 0.34;
+  }
+  if (timeComplexity.includes("n")) {
+    return 0.5;
+  }
+  return 0.28;
+}
+
+function formatNValue(value: number): string {
+  return value.toLocaleString();
+}
+
+function buildScaleWarning(analysis: AnalysisResult | null) {
+  if (!analysis) {
+    return null;
+  }
+
+  const runtimes = analysis.simulation.runtime_estimated_ms;
+  const nValues = analysis.simulation.n_values;
+  if (runtimes.length < 2 || nValues.length !== runtimes.length) {
+    return null;
+  }
+
+  const topHotspot = analysis.hotspots[0];
+  const ratios = runtimes.slice(1).map((value, index) => {
+    const previous = Math.max(runtimes[index], 0.0001);
+    return value / previous;
+  });
+
+  let dangerIndex = ratios.findIndex((ratio, index) => ratio >= 2.6 || runtimes[index + 1] >= 400);
+  if (dangerIndex === -1) {
+    dangerIndex = ratios.findIndex((ratio) => ratio >= 1.8);
+  }
+  const triggerIndex = Math.max(1, dangerIndex === -1 ? 1 : dangerIndex + 1);
+
+  let impracticalIndex = runtimes.findIndex((value, index) => index > triggerIndex && value >= 2500);
+  if (impracticalIndex === -1) {
+    impracticalIndex = runtimes.findIndex((value, index) => index > triggerIndex && value >= 1000);
+  }
+  if (impracticalIndex === -1) {
+    impracticalIndex = runtimes.length - 1;
+  }
+
+  const triggerN = nValues[triggerIndex];
+  const impracticalN = nValues[impracticalIndex];
+  const hotspotText = topHotspot
+    ? `Around n=${formatNValue(triggerN)}, line ${topHotspot.line} starts to dominate because ${topHotspot.reason.toLowerCase()}.`
+    : `Around n=${formatNValue(triggerN)}, this implementation starts compounding fast.`;
+  const impracticalText =
+    impracticalIndex > triggerIndex
+      ? `Past n=${formatNValue(impracticalN)}, this approach becomes impractical for interactive use.`
+      : `By n=${formatNValue(impracticalN)}, this curve is already expensive enough to justify a rewrite.`;
+
+  return {
+    annotation: {
+      index: triggerIndex,
+      label: `Gets risky at n=${formatNValue(triggerN)}`,
+      detail: topHotspot
+        ? `Line ${topHotspot.line} begins to dominate the run here.`
+        : "The runtime curve bends sharply here.",
+    },
+    hotspotText,
+    impracticalText,
+  };
 }
 
 export default function App() {
@@ -168,6 +249,19 @@ export default function App() {
   const heroHotspotLines = displayAnalysis?.hotspots.slice(0, 4).map((item) => item.line) ?? [];
   const heroTraceSteps = displayAnalysis?.trace_preview.events.length ?? 0;
   const heroNodeCount = displayAnalysis?.nodes.length ?? 0;
+  const hotspotCount = displayAnalysis?.hotspots.length ?? 0;
+  const bottleneckSeverity = complexitySeverity(displayAnalysis?.complexity.time);
+  const bottleneckIncomingCount = Math.min(24, Math.max(10, hotspotCount * 4 + 8));
+  const bottleneckNeckCount = Math.min(9, Math.max(4, Math.round(10 - bottleneckSeverity * 6)));
+  const bottleneckExitCount = Math.min(12, Math.max(4, Math.round(12 - bottleneckSeverity * 5)));
+  const bottleneckNeckWidth = `${Math.max(6, 14 - bottleneckSeverity * 7)}%`;
+  const bottleneckReleaseWidth = `${Math.max(16, 28 - bottleneckSeverity * 10)}%`;
+  const scaleWarning = buildScaleWarning(displayAnalysis);
+  const bottleneckShellStyle = {
+    "--bottleneck-neck-width": bottleneckNeckWidth,
+    "--bottleneck-release-width": bottleneckReleaseWidth,
+    "--bottleneck-flow-opacity": `${0.66 + (displayAnalysis?.complexity.confidence ?? 0.4) * 0.24}`,
+  } as CSSProperties;
 
   return (
     <div className="app-shell">
@@ -275,24 +369,33 @@ export default function App() {
           </div>
         </div>
         <div className="hero-controls hero-story-card">
-          <p className="eyebrow">Scroll trigger</p>
-          <h2>A homepage that moves like a story, then hands you the lab.</h2>
+          <p className="eyebrow">What this unlocks</p>
+          <h2>Run it once. See what is slow. Know what to fix.</h2>
           <p className="hero-copy">
-            The front of the site should feel guided and cinematic. The deeper you go, the more it shifts from big
-            idea to actual working instrumentation.
+            The point is to make performance feel less fuzzy. You should be able to spot the expensive part, understand
+            how it grows, and decide whether a rewrite is actually worth your time.
           </p>
           <div className="story-stat-grid">
             <article>
-              <strong>Reveal</strong>
-              <span>scroll-led chapters instead of flat feature blurbs</span>
+              <strong>{displayAnalysis?.hotspots[0]?.line ? `Line ${displayAnalysis.hotspots[0].line}` : "Hotspots"}</strong>
+              <span>
+                {displayAnalysis?.hotspots[0]?.reason ?? "Find the exact region that dominates runtime first."}
+              </span>
             </article>
             <article>
-              <strong>Motion</strong>
-              <span>panels, type, and visuals that enter with intention</span>
+              <strong>{displayAnalysis?.complexity.time ?? "Growth risk"}</strong>
+              <span>
+                {displayAnalysis
+                  ? `Current structure suggests ${displayAnalysis.complexity.time} time and ${displayAnalysis.complexity.space} space.`
+                  : "Understand how the implementation behaves before scaling it."}
+              </span>
             </article>
             <article>
-              <strong>Depth</strong>
-              <span>website-first pacing before the analysis workspace begins</span>
+              <strong>{displayAnalysis?.suggestions.length ? "Next move" : "Optimization"}</strong>
+              <span>
+                {displayAnalysis?.suggestions[0]?.title ??
+                  "Get specific rewrite ideas instead of generic “optimize this” advice."}
+              </span>
             </article>
           </div>
         </div>
@@ -315,8 +418,8 @@ export default function App() {
 
       <section className="story-drive" id="story">
         <div className="section-intro reveal-on-scroll">
-          <p className="eyebrow">Story drive</p>
-          <h2>Scroll through the moments where an algorithm stops being invisible.</h2>
+          <p className="eyebrow">Decision layers</p>
+          <h2>Before you optimize anything, answer these three questions.</h2>
         </div>
 
         <div className="chapter-shell">
@@ -328,15 +431,21 @@ export default function App() {
               <div className="stage-header">
                 <div>
                   <p className="eyebrow">Live scan surface</p>
-                  <h3>CodeX-Ray Story Mode</h3>
+                  <h3>Optimization decision map</h3>
                 </div>
                 <span className="scan-chip">Interactive</span>
               </div>
 
               <div className="stage-ribbons">
-                <span className="stage-ribbon ribbon-a">Execution path</span>
-                <span className="stage-ribbon ribbon-b">Growth pressure</span>
-                <span className="stage-ribbon ribbon-c">Hotspot dominance</span>
+                <span className="stage-ribbon ribbon-a">
+                  {displayAnalysis?.hotspots[0]?.line ? `Pressure at line ${displayAnalysis.hotspots[0].line}` : "Pressure lines"}
+                </span>
+                <span className="stage-ribbon ribbon-b">
+                  {displayAnalysis?.complexity.time ? `${displayAnalysis.complexity.time} growth profile` : "Growth profile"}
+                </span>
+                <span className="stage-ribbon ribbon-c">
+                  {displayAnalysis?.suggestions.length ? "Rewrite opportunities found" : "Rewrite opportunities"}
+                </span>
               </div>
 
               <div className="stage-footer-grid">
@@ -360,11 +469,12 @@ export default function App() {
             <article className="chapter-card reveal-on-scroll chapter-card-primary">
               <span className="chapter-index">01</span>
               <div className="chapter-copy">
-                <p className="chapter-kicker">Freeze the code</p>
-                <h3>Execution should arrive like a scene, not a dump of numbers.</h3>
+                <p className="chapter-kicker">Where is the pressure?</p>
+                <h3>Find the real bottleneck</h3>
                 <p>
-                  As you scroll into the product, the page should already be teaching the user how CodeX-Ray thinks:
-                  what line fired, where pressure builds, and why the next moment matters.
+                  Most of your code is fine. The issue is usually one loop, one lookup, or one repeated operation
+                  that&apos;s slowing everything down. Don&apos;t guess, identify the exact line that&apos;s causing the
+                  problem.
                 </p>
               </div>
             </article>
@@ -372,11 +482,11 @@ export default function App() {
             <article className="chapter-card reveal-on-scroll chapter-card-secondary">
               <span className="chapter-index">02</span>
               <div className="chapter-copy">
-                <p className="chapter-kicker">Show the buildup</p>
-                <h3>Runtime and memory should feel like motion gathering force.</h3>
+                <p className="chapter-kicker">What happens at scale?</p>
+                <h3>Think about scale early</h3>
                 <p>
-                  The graphs, cards, and transitions need to imply acceleration, branching, and load, so the site feels
-                  alive before the user even presses Analyze.
+                  Code can look perfectly fine with small inputs. The real test is what happens when your data grows
+                  10x or 100x. Always consider how your solution behaves at scale, not just when it&apos;s small.
                 </p>
               </div>
             </article>
@@ -384,11 +494,12 @@ export default function App() {
             <article className="chapter-card reveal-on-scroll chapter-card-tertiary">
               <span className="chapter-index">03</span>
               <div className="chapter-copy">
-                <p className="chapter-kicker">Turn into a workspace</p>
-                <h3>After the cinematic part, the site has to land cleanly in the actual tool.</h3>
+                <p className="chapter-kicker">What should you change?</p>
+                <h3>Make intentional improvements</h3>
                 <p>
-                  That transition matters. The homepage earns attention with rhythm and motion, then hands the user a
-                  serious code lab without feeling like a different product.
+                  Saying something is &ldquo;slow&rdquo; isn&apos;t enough. You need a clear fix. That could mean changing
+                  the data structure, moving where a sort happens, caching repeated work, or sometimes doing nothing at
+                  all. Be precise about what you change and why.
                 </p>
               </div>
             </article>
@@ -516,6 +627,59 @@ export default function App() {
           <div>
             <p className="eyebrow">Insights</p>
             <h2>Trace the code, inspect the bottlenecks, and understand the growth curve.</h2>
+            <p className="section-support-copy">
+              A bottleneck is what happens when a lot of work tries to pass through a tiny expensive region. CodeX-Ray
+              helps you see where the flow gets squeezed.
+            </p>
+          </div>
+          <div className="bottleneck-visual" aria-hidden="true">
+            <div className="bottleneck-glow bottleneck-glow-left" />
+            <div className="bottleneck-glow bottleneck-glow-right" />
+            <div className="bottleneck-shell" style={bottleneckShellStyle}>
+              <div className="bottleneck-flow">
+                {Array.from({ length: bottleneckIncomingCount }).map((_, index) => (
+                  <span
+                    key={`flow-left-${index}`}
+                    className={`flow-dot flow-dot-left tone-${(index % 3) + 1}`}
+                    style={
+                      {
+                        "--delay": `${index * 0.28}s`,
+                        "--offset": `${(index % 6) * 12}px`,
+                      } as CSSProperties
+                    }
+                  />
+                ))}
+                {Array.from({ length: bottleneckNeckCount }).map((_, index) => (
+                  <span
+                    key={`flow-neck-${index}`}
+                    className="flow-dot flow-dot-neck"
+                    style={
+                      {
+                        "--delay": `${0.9 + index * 0.32}s`,
+                        "--offset": `${(index % 3) * 6}px`,
+                      } as CSSProperties
+                    }
+                  />
+                ))}
+                {Array.from({ length: bottleneckExitCount }).map((_, index) => (
+                  <span
+                    key={`flow-right-${index}`}
+                    className={`flow-dot flow-dot-right tone-${((index + 1) % 3) + 1}`}
+                    style={
+                      {
+                        "--delay": `${1.4 + index * 0.3}s`,
+                        "--offset": `${(index % 4) * 10}px`,
+                      } as CSSProperties
+                    }
+                  />
+                ))}
+              </div>
+              <div className="bottleneck-shape">
+                <div className="shape-wide" />
+                <div className="shape-neck" />
+                <div className="shape-release" />
+              </div>
+            </div>
           </div>
         </section>
 
@@ -528,7 +692,25 @@ export default function App() {
               currentIndex={traceIndex}
               onIndexChange={setTraceIndex}
             />
-            {displayAnalysis ? <SimulationDeck simulation={displayAnalysis.simulation} /> : null}
+            {displayAnalysis ? (
+              <>
+                <SimulationDeck simulation={displayAnalysis.simulation} runtimeAnnotation={scaleWarning?.annotation} />
+                {scaleWarning ? (
+                  <section className="panel scale-warning-panel">
+                    <div className="panel-header compact">
+                      <div>
+                        <p className="eyebrow">Why This Gets Bad</p>
+                        <h3>Where the curve stops being safe</h3>
+                      </div>
+                    </div>
+                    <div className="scale-warning-copy">
+                      <p>{scaleWarning.hotspotText}</p>
+                      <p>{scaleWarning.impracticalText}</p>
+                    </div>
+                  </section>
+                ) : null}
+              </>
+            ) : null}
             <section className="panel">
               <div className="panel-header compact">
                 <div>
