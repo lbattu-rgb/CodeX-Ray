@@ -11,7 +11,7 @@ Instead of only telling you whether code works, it helps answer the questions th
 
 The project sits between an execution visualizer, a lightweight performance analysis tool, and a teaching aid. The goal is simple: make algorithm behavior easier to see and easier to explain.
 
-Live site: [AlgoScope on Vercel](https://algoscope.vercel.app)
+Live site: [AlgoScope on Vercel](https://algoscope-nine.vercel.app)
 
 ## What It Does
 
