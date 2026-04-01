@@ -3,14 +3,14 @@ from __future__ import annotations
 import hashlib
 from typing import Any
 
-from app.engines.complexity import infer_complexity
-from app.engines.dna import build_dna
-from app.engines.explanation import build_explanations
-from app.engines.hotspot import compute_hotspots
-from app.engines.optimization import generate_suggestions
-from app.engines.parser import parse_source
-from app.engines.simulation import build_simulation
-from app.engines.trace_engine import generate_trace
+from .engines.complexity import infer_complexity
+from .engines.dna import build_dna
+from .engines.explanation import build_explanations
+from .engines.hotspot import compute_hotspots
+from .engines.optimization import generate_suggestions
+from .engines.parser import parse_source
+from .engines.simulation import build_simulation
+from .engines.trace_engine import generate_trace
 
 
 def build_analysis(source: str, entry_function: str | None, args: list[Any] | None = None, kwargs: dict[str, Any] | None = None) -> dict[str, Any]:

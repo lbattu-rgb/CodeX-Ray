@@ -14,25 +14,25 @@ type CodePanelProps = {
 
 function defineTheme(monaco: typeof Monaco) {
   monaco.editor.defineTheme("codex-ray-xray", {
-    base: "vs-dark",
+    base: "vs",
     inherit: true,
     rules: [
-      { token: "keyword", foreground: "8dd8ff" },
-      { token: "string", foreground: "ffa7de" },
-      { token: "number", foreground: "7ef0d6" },
-      { token: "comment", foreground: "6683a8" },
-      { token: "identifier", foreground: "eef4ff" },
+      { token: "keyword", foreground: "3a6ee8" },
+      { token: "string", foreground: "d64e97" },
+      { token: "number", foreground: "028b7a" },
+      { token: "comment", foreground: "89a0bf" },
+      { token: "identifier", foreground: "20304c" },
     ],
     colors: {
-      "editor.background": "#07111d",
-      "editor.foreground": "#eef4ff",
-      "editorLineNumber.foreground": "#50698f",
-      "editorLineNumber.activeForeground": "#d9e7ff",
-      "editorCursor.foreground": "#7ee8ff",
-      "editor.selectionBackground": "#1d365966",
-      "editor.inactiveSelectionBackground": "#18304f44",
-      "editor.lineHighlightBackground": "#0d1a2d88",
-      "editorGutter.background": "#07111d",
+      "editor.background": "#fffaf6",
+      "editor.foreground": "#20304c",
+      "editorLineNumber.foreground": "#aab6cd",
+      "editorLineNumber.activeForeground": "#3a4f77",
+      "editorCursor.foreground": "#2d71ff",
+      "editor.selectionBackground": "#dce8ff",
+      "editor.inactiveSelectionBackground": "#edf3ff",
+      "editor.lineHighlightBackground": "#fff1e7",
+      "editorGutter.background": "#fffaf6",
     },
   });
 }

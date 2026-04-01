@@ -3,11 +3,11 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.examples.snippets import EXAMPLE_SNIPPETS
-from app.schemas import AnalyzeRequest, CompareRequest, SimulateRequest, TraceRequest
-from app.services import build_analysis, build_comparison
-from app.engines.simulation import build_simulation
-from app.engines.trace_engine import generate_trace
+from .examples.snippets import EXAMPLE_SNIPPETS
+from .schemas import AnalyzeRequest, CompareRequest, SimulateRequest, TraceRequest
+from .services import build_analysis, build_comparison
+from .engines.simulation import build_simulation
+from .engines.trace_engine import generate_trace
 
 
 app = FastAPI(title="CodeX-Ray API", version="0.1.0")

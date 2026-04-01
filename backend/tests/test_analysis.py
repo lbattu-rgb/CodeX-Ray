@@ -1,6 +1,6 @@
 import unittest
 
-from app.services import build_analysis
+from backend.app.services import build_analysis
 
 
 SAMPLE = """def two_sum(nums, target):

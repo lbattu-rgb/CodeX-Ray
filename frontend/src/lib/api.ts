@@ -1,6 +1,6 @@
 import type { AnalysisResult, CompareResult, ExampleSnippet, InputConfig } from "./types";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = import.meta.env.DEV ? "http://localhost:8000" : "/_/backend";
 
 async function readJson<T>(response: Response): Promise<T> {
   if (!response.ok) {

@@ -86,6 +86,23 @@ export default function App() {
       .catch(() => undefined);
   }, []);
 
+  useEffect(() => {
+    const elements = Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          }
+        });
+      },
+      { threshold: 0.16, rootMargin: "0px 0px -8% 0px" },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
   const inputConfig = useMemo<InputConfig>(() => {
     try {
       const parsed = JSON.parse(argsText);
@@ -154,14 +171,37 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header className="hero">
+      <header className="site-nav">
+        <div className="brand-lockup">
+          <span className="brand-mark">CX</span>
+          <div>
+            <strong>CodeX-Ray</strong>
+            <p>Algorithm intelligence studio</p>
+          </div>
+        </div>
+        <nav className="nav-links">
+          <a href="#story">Story</a>
+          <a href="#workspace">Workspace</a>
+          <a href="#insights">Insights</a>
+        </nav>
+      </header>
+
+      <header className="hero reveal-on-scroll is-visible">
         <div className="hero-copy-block">
           <p className="eyebrow">Algorithm Observatory</p>
-          <h1>CodeX-Ray</h1>
+          <h1>See what your code becomes as it scales.</h1>
           <p className="hero-copy">
-            See, predict, and reshape algorithm behavior with trace playback, growth simulation, bottleneck heatmaps,
-            counterfactual diffs, and comparison-native analysis.
+            CodeX-Ray turns algorithms into something you can inspect visually: execution, growth, hotspots,
+            tradeoffs, and structural behavior all in one place.
           </p>
+          <div className="hero-actions">
+            <a href="#workspace" className="hero-link primary-link">
+              Launch workspace
+            </a>
+            <a href="#story" className="hero-link secondary-link">
+              Explore the concept
+            </a>
+          </div>
           <div className="hero-scan-summary">
             <div className="hero-summary-card">
               <p className="eyebrow">Live X-Ray</p>
@@ -234,45 +274,146 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="hero-controls">
-          <label className="input-stack">
-            <span>Example gallery</span>
-            <select value={selectedExample} onChange={(event) => applyExample(event.target.value)}>
-              {Object.entries(examples).map(([key, example]) => (
-                <option key={key} value={key}>
-                  {example.title}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="input-stack wide">
-            <span>Function args (JSON array)</span>
-            <textarea value={argsText} onChange={(event) => setArgsText(event.target.value)} />
-          </label>
-          <div className="toggle-strip">
-            <button className={!compareMode ? "active" : ""} onClick={() => setCompareMode(false)}>
-              Single analysis
-            </button>
-            <button className={compareMode ? "active" : ""} onClick={() => setCompareMode(true)}>
-              Compare mode
-            </button>
-          </div>
-          <div className="action-row">
-            <button className="primary-button" onClick={runAnalysis} disabled={loading}>
-              {loading ? "Analyzing..." : "Analyze"}
-            </button>
-            {compareMode ? (
-              <button className="secondary-button" onClick={runComparison} disabled={loading}>
-                {loading ? "Comparing..." : "Compare"}
-              </button>
-            ) : null}
+        <div className="hero-controls hero-story-card">
+          <p className="eyebrow">What makes this different</p>
+          <h2>Not a visualizer. Not a profiler. Not a tutor. All three talking to each other.</h2>
+          <p className="hero-copy">
+            The point of CodeX-Ray is to bridge the gap between code execution, algorithm understanding, and
+            performance intuition. It should feel like a product you move through, not a single chart dumped on a page.
+          </p>
+          <div className="story-stat-grid">
+            <article>
+              <strong>Trace</strong>
+              <span>line-by-line execution with stack state</span>
+            </article>
+            <article>
+              <strong>Growth</strong>
+              <span>projected runtime and memory across input sizes</span>
+            </article>
+            <article>
+              <strong>Compare</strong>
+              <span>implementation-level tradeoff exploration</span>
+            </article>
           </div>
         </div>
       </header>
 
+      <div className="curve-divider reveal-on-scroll" aria-hidden="true">
+        <div className="curve-divider-track" />
+        <div className="curve-divider-orb orb-left" />
+        <div className="curve-divider-orb orb-right" />
+      </div>
+
+      <section className="story-section reveal-on-scroll" id="story">
+        <div className="section-intro">
+          <p className="eyebrow">Experience</p>
+          <h2>Built like a site you explore, not a single dashboard you glance at.</h2>
+        </div>
+        <div className="story-grid">
+          <article className="story-card coral-card split-card">
+            <div className="story-copy-block">
+              <span className="story-kicker">Sectioned flow</span>
+              <h3>Move from idea to analysis to explanation.</h3>
+              <p>
+                The layout is split into a narrative landing section, a working code lab, and a results system so the
+                product feels guided instead of flat.
+              </p>
+            </div>
+            <div className="story-visual visual-wave">
+              <span className="visual-pill pill-one" />
+              <span className="visual-pill pill-two" />
+              <span className="visual-curve curve-one" />
+            </div>
+          </article>
+          <article className="story-card aqua-card split-card reverse-card">
+            <div className="story-copy-block">
+              <span className="story-kicker">Fresh palette</span>
+              <h3>Light, vivid, and more inviting.</h3>
+              <p>
+                The visual direction shifts away from the heavy dark console look and into something brighter, more
+                modern, and more memorable.
+              </p>
+            </div>
+            <div className="story-visual visual-columns">
+              <span className="visual-column short" />
+              <span className="visual-column medium" />
+              <span className="visual-column tall" />
+              <span className="visual-column medium" />
+              <span className="visual-column short" />
+            </div>
+          </article>
+          <article className="story-card sand-card split-card">
+            <div className="story-copy-block">
+              <span className="story-kicker">Shapes and rhythm</span>
+              <h3>Asymmetry, curves, and stronger scroll pacing.</h3>
+              <p>
+                Cards, callouts, and visual clusters create real movement through the page, which makes the product feel
+                much more like a polished website.
+              </p>
+            </div>
+            <div className="story-visual visual-constellation">
+              <span className="visual-node node-a" />
+              <span className="visual-node node-b" />
+              <span className="visual-node node-c" />
+              <span className="visual-arc arc-one" />
+              <span className="visual-arc arc-two" />
+            </div>
+          </article>
+        </div>
+      </section>
+
       {error ? <div className="error-banner">{error}</div> : null}
 
-      <main className="workspace">
+      <div className="curve-divider reveal-on-scroll" aria-hidden="true">
+        <div className="curve-divider-track soft-track" />
+        <div className="curve-divider-orb orb-center" />
+      </div>
+
+      <main className="workspace reveal-on-scroll" id="workspace">
+        <section className="section-intro with-panel reveal-on-scroll">
+          <div>
+            <p className="eyebrow">Workspace</p>
+            <h2>Paste code, run the X-ray, and inspect what actually matters.</h2>
+          </div>
+        </section>
+
+        <section className="control-shell reveal-on-scroll">
+          <div className="hero-controls">
+            <label className="input-stack">
+              <span>Example gallery</span>
+              <select value={selectedExample} onChange={(event) => applyExample(event.target.value)}>
+                {Object.entries(examples).map(([key, example]) => (
+                  <option key={key} value={key}>
+                    {example.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="input-stack wide">
+              <span>Function args (JSON array)</span>
+              <textarea value={argsText} onChange={(event) => setArgsText(event.target.value)} />
+            </label>
+            <div className="toggle-strip">
+              <button className={!compareMode ? "active" : ""} onClick={() => setCompareMode(false)}>
+                Single analysis
+              </button>
+              <button className={compareMode ? "active" : ""} onClick={() => setCompareMode(true)}>
+                Compare mode
+              </button>
+            </div>
+            <div className="action-row">
+              <button className="primary-button" onClick={runAnalysis} disabled={loading}>
+                {loading ? "Analyzing..." : "Analyze"}
+              </button>
+              {compareMode ? (
+                <button className="secondary-button" onClick={runComparison} disabled={loading}>
+                  {loading ? "Comparing..." : "Compare"}
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </section>
+
         <div className={compareMode ? "editor-grid compare" : "editor-grid"}>
           <CodePanel
             title="Primary implementation"
@@ -296,7 +437,7 @@ export default function App() {
           ) : null}
         </div>
 
-        <section className="summary-strip">
+        <section className="summary-strip reveal-on-scroll">
           <MetricCard
             label="Predicted Time"
             value={displayAnalysis?.complexity.time ?? "--"}
@@ -337,7 +478,14 @@ export default function App() {
           </section>
         ) : null}
 
-        <div className="content-grid">
+        <section className="section-intro with-panel reveal-on-scroll" id="insights">
+          <div>
+            <p className="eyebrow">Insights</p>
+            <h2>Trace the code, inspect the bottlenecks, and understand the growth curve.</h2>
+          </div>
+        </section>
+
+        <div className="content-grid reveal-on-scroll">
           <div className="center-column">
             <TraceTimeline
               events={displayAnalysis?.trace_preview.events ?? []}
@@ -388,6 +536,22 @@ export default function App() {
           </aside>
         </div>
       </main>
+
+      <div className="curve-divider reveal-on-scroll" aria-hidden="true">
+        <div className="curve-divider-track warm-track" />
+        <div className="curve-divider-orb orb-left" />
+        <div className="curve-divider-orb orb-right" />
+      </div>
+
+      <footer className="site-footer reveal-on-scroll">
+        <div>
+          <p className="eyebrow">CodeX-Ray</p>
+          <h3>Algorithm intelligence for people who want more than just “it works.”</h3>
+        </div>
+        <p>
+          Visualize execution. Predict complexity. Compare implementations. Make algorithm behavior feel tangible.
+        </p>
+      </footer>
     </div>
   );
 }
