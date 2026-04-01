@@ -1,75 +1,73 @@
-# CodeX-Ray
+# AlgoScope
 
-CodeX-Ray is an algorithm intelligence platform for people who do not just want to run code, but actually understand how it behaves.
+AlgoScope is a full-stack web app for understanding how Python algorithms behave.
 
-Instead of stopping at "this works" or "this is slow," CodeX-Ray tries to answer the deeper questions:
+Instead of only telling you whether code works, it helps answer the questions that usually come next:
 
-- What is this code doing step by step?
-- Why does it scale the way it does?
-- Which line is actually causing the bottleneck?
-- What changes if I rewrite one part of the algorithm?
-- Is one implementation meaningfully better than another?
+- Where is the bottleneck?
+- How will this scale?
+- Which implementation is better?
+- What actually changes if I rewrite one part?
 
-This project was built to sit in the space between execution visualizers, static analyzers, and performance tooling. The goal is to make algorithm behavior visible, explainable, and interactive in a way that feels more like an X-ray than a debugger.
+The project sits between an execution visualizer, a lightweight performance analysis tool, and a teaching aid. The goal is simple: make algorithm behavior easier to see and easier to explain.
 
-## Why I Built This
+Live site: [AlgoScope on Vercel](https://algoscope.vercel.app)
 
-A lot of tools show pieces of the story:
+## What It Does
 
-- visualizers show execution
-- profilers show hotspots after the fact
-- complexity discussions stay theoretical
-- AI explanations often sound convincing without grounding
+AlgoScope currently supports:
 
-What I wanted instead was one system where the code, the trace, the complexity prediction, the bottlenecks, the growth curve, and the explanation all talk to each other.
+- structural analysis of Python code using the AST
+- step-by-step execution traces for supported snippets
+- predicted time and space complexity with confidence
+- simulated runtime and memory growth across input sizes
+- hotspot detection with line-level reasoning
+- optimization suggestions for common inefficient patterns
+- a visual algorithm fingerprint called `Complexity DNA`
+- side-by-side comparison between implementations
+- plain-language explanations tied to the analysis
 
-CodeX-Ray is my attempt at that.
+## Why This Project Exists
 
-## What CodeX-Ray Does
+A lot of tools only show one part of the story.
 
-At a high level, you paste in Python code and CodeX-Ray can:
+- Visualizers show execution, but not how code scales.
+- Profilers show hotspots, but only after you run the code.
+- Big-O discussions are useful, but often stay abstract.
+- AI explanations can sound polished without being grounded.
 
-- parse the structure of the algorithm
-- generate a step-by-step execution trace
-- predict time and space complexity
-- simulate runtime and memory growth as input size changes
-- identify likely bottleneck lines
-- surface optimization suggestions
-- build a behavioral fingerprint called Complexity DNA
-- compare two implementations side by side
-- explain the result in plain language
+AlgoScope tries to connect those layers in one place so the code, trace, complexity prediction, growth curve, and suggestions all support the same conclusion.
 
-## Core Features
+## Main Features
 
-### 1. Structural Analysis
+### 1. Structural analysis
 
-The backend parses Python source into an internal representation that captures:
+The backend parses Python code into a structured model that captures:
 
 - functions
 - loops
 - branches
-- function calls
+- calls
 - recursion candidates
-- approximate control flow
-- line-level dependencies
+- line-level nodes used across the UI
 
-This gives the rest of the system a structure-aware view of the code instead of treating it like plain text.
+This lets the app reason about code as structure, not just raw text.
 
-### 2. Execution Trace
+### 2. Execution tracing
 
-CodeX-Ray can execute supported snippets in a constrained trace environment and collect:
+Supported snippets can be run in a constrained trace environment that records:
 
-- line execution order
-- stack state
-- local variables
+- executed lines
+- local state
+- stack frames
 - returns
-- basic heap summary
+- basic heap summaries
 
-The UI then lets you scrub across trace steps while the active executing line is reflected directly in the code editor.
+The frontend links that trace back to the editor so you can scrub through execution and see the active line directly.
 
-### 3. Complexity Prediction
+### 3. Complexity prediction
 
-The project includes a rule-based complexity engine that looks at visible algorithm structure and infers likely time and space complexity for common patterns such as:
+AlgoScope includes a rule-based complexity engine for common patterns such as:
 
 - single loops
 - nested loops
@@ -78,32 +76,30 @@ The project includes a rule-based complexity engine that looks at visible algori
 - branching recursion
 - collection growth
 
-It also returns evidence lines and a confidence score so the result is not just a label with no reasoning behind it.
+It also returns evidence lines and a confidence score so the result is more than just a label.
 
-### 4. Runtime and Memory Simulation
+### 4. Runtime and memory simulation
 
-Instead of forcing brute-force benchmarking for every scale question, CodeX-Ray estimates how runtime and memory grow across increasing input sizes.
+The app estimates how a solution behaves as input size grows. This is useful for seeing:
 
-This makes it easier to see:
+- where a solution stops being practical
+- how two complexity classes diverge
+- whether a rewrite actually changes the growth story
 
-- when a solution starts to break down
-- whether an implementation scales gracefully
-- how different complexity classes diverge visually
+### 5. Bottleneck detection
 
-### 5. Bottleneck Detection
+The app surfaces likely expensive regions and explains why they matter.
 
-The app highlights expensive regions and surfaces hotspot lines with reasons tied to the detected structure.
-
-Examples include:
+Examples:
 
 - nested loop pressure
-- repeated calls inside loops
+- repeated lookups inside loops
 - repeated allocation
-- sorting cost
+- sorting in the wrong place
 
 ### 6. Complexity DNA
 
-One of the more unique ideas in the project is the Complexity DNA panel, which turns algorithm behavior into a fingerprint across dimensions like:
+Complexity DNA is a compact behavioral profile for an algorithm. It summarizes dimensions such as:
 
 - iteration intensity
 - recursion tendency
@@ -112,34 +108,15 @@ One of the more unique ideas in the project is the Complexity DNA panel, which t
 - allocation frequency
 - input sensitivity
 
-The point is to make algorithm behavior feel profile-able instead of hidden.
+### 7. Compare mode
 
-### 7. Comparison Mode
-
-CodeX-Ray supports comparing two implementations of the same idea so you can inspect:
+Two implementations can be compared side by side across:
 
 - predicted complexity
 - projected runtime
 - projected memory
 - hotspot differences
-- behavioral profile differences
-
-This is especially useful for learning, optimization, and competition demos.
-
-## Current UI Direction
-
-The frontend is intentionally designed to feel more like a scanning environment than a generic dashboard.
-
-The current experience includes:
-
-- a Monaco-based code editor
-- hotspot-aware gutter and line highlighting
-- trace-linked active line highlighting
-- animated growth graphs
-- a data-aware hero summary instead of a decorative landing block
-- luminous X-ray inspired styling
-
-The design goal is not just "pretty." It is to make the app feel like it is actively reading and interpreting the code.
+- explanation and suggestion differences
 
 ## Tech Stack
 
@@ -158,7 +135,7 @@ The design goal is not just "pretty." It is to make the app feel like it is acti
 - Pydantic
 - Python AST
 
-## Architecture Overview
+## Architecture
 
 ```text
 User Code
@@ -170,31 +147,25 @@ User Code
   -> Frontend Visualization Layer
 ```
 
-More detailed architecture notes live in [ARCHITECTURE.md](/Users/likhithabattu/Documents/Personal%20Projects/CodeX-Ray/docs/ARCHITECTURE.md).
+More detailed notes live in [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
 ## Repository Structure
 
 ```text
-CodeX-Ray/
+AlgoScope/
 ├── backend/
 │   ├── app/
-│   │   ├── engines/
-│   │   ├── examples/
-│   │   ├── main.py
-│   │   ├── schemas.py
-│   │   └── services.py
 │   ├── requirements.txt
 │   └── tests/
 ├── docs/
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   ├── lib/
-│   │   ├── App.tsx
-│   │   └── styles.css
 │   ├── package.json
 │   └── vite.config.ts
-├── CODEX_RAY_PRD.md
+├── api/
+├── shared/
+├── ALGOSCOPE_PRD.md
+├── ALGOSCOPE_IMPLEMENTATION_PROMPT.md
 └── README.md
 ```
 
@@ -203,162 +174,71 @@ CodeX-Ray/
 ### 1. Start the backend
 
 ```bash
-cd "/Users/likhithabattu/Documents/Personal Projects/CodeX-Ray/backend"
+cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Backend runs on:
+Backend:
 
 `http://127.0.0.1:8000`
 
 ### 2. Start the frontend
 
 ```bash
-cd "/Users/likhithabattu/Documents/Personal Projects/CodeX-Ray/frontend"
+cd frontend
 npm install
 npm run dev
 ```
 
-Frontend runs on:
+Frontend:
 
 `http://localhost:5173`
 
-## Example Snippets To Try
+## Good Demo Inputs
 
-### Two Sum Naive
+### Naive `two_sum`
 
-Good for:
+Useful for:
 
 - nested loops
-- hotspot highlighting
-- comparison against a better implementation
+- clear hotspot detection
+- strong `O(n^2)` story
 
-### Two Sum Hash Map
+### Hash-map `two_sum`
 
-Good for:
+Useful for:
 
-- better complexity profile
-- compare mode
-- optimization story
+- comparison mode
+- rewrite story
+- showing how one design change lowers pressure
 
 ### Recursive Fibonacci
 
-Good for:
+Useful for:
 
 - recursion
-- branching behavior
-- scaling contrast
+- branching growth
+- “gets bad at n = ...” messaging
 
-### Merge Sort
+### Merge sort
 
-Good for:
+Useful for:
 
-- divide and conquer
+- divide-and-conquer structure
 - recursion plus merging
-- more interesting trace behavior
+- cleaner scaling than brute-force examples
 
-## API Endpoints
+## Notes
 
-### `GET /health`
+- The current MVP focuses on Python and supported snippet patterns.
+- Some dynamic language features and advanced Python constructs are intentionally out of scope for now.
+- Complexity prediction is an informed estimate, not a proof, so the UI surfaces confidence where appropriate.
 
-Basic backend health check.
+## Documentation
 
-### `GET /examples`
-
-Returns bundled demo snippets.
-
-### `POST /analyze`
-
-Runs structural analysis and returns:
-
-- complexity prediction
-- hotspots
-- DNA
-- suggestions
-- explanations
-- trace preview
-- simulation output
-
-### `POST /trace`
-
-Generates a full trace payload for supported snippets.
-
-### `POST /simulate`
-
-Produces runtime and memory projection series from analysis output.
-
-### `POST /compare`
-
-Compares two implementations and returns a summary plus both analyses.
-
-## What’s Implemented Right Now
-
-The current version already includes a strong vertical slice:
-
-- AST-based analysis backend
-- complexity inference
-- hotspot scoring
-- optimization suggestions
-- simulation curves
-- explanation layer
-- compare mode
-- trace timeline
-- Monaco editor integration
-- trace-synced line highlighting
-- analysis-aware hero summary
-
-This is not just a mockup. It is a working product foundation.
-
-## What Still Needs Work
-
-There is still a lot of room to push this further.
-
-Highest-value next steps:
-
-- richer recursion tree visualization
-- dedicated control-flow / data-flow views
-- better measured-vs-estimated performance calibration
-- play/pause animated trace playback
-- more robust support for advanced Python constructs
-- cleaner error handling when the user pastes malformed code
-- stronger compare-mode visual storytelling
-
-## Validation
-
-Validated during development:
-
-- backend unit test passes
-- FastAPI app imports and runs
-- health endpoint responds correctly
-- analyze endpoint returns structured payloads
-- frontend production build passes
-- Monaco editor integration builds successfully
-
-## What Makes This Different
-
-CodeX-Ray is not trying to be only:
-
-- a debugger
-- a visualizer
-- a profiler
-- an AI explainer
-
-It is trying to combine the best parts of those categories into one experience focused on algorithm understanding.
-
-That is the real idea behind the project.
-
-## Future Vision
-
-Long term, I want this to grow into something much bigger:
-
-- multi-language support
-- stronger symbolic reasoning
-- better educational modes
-- classroom / interview prep workflows
-- deeper optimization guidance
-- VS Code integration
-
-The bigger dream is a system that does for algorithm behavior what an X-ray does for anatomy: reveal the structure underneath what you can already see.
+- PRD: [ALGOSCOPE_PRD.md](./ALGOSCOPE_PRD.md)
+- Build prompt: [ALGOSCOPE_IMPLEMENTATION_PROMPT.md](./ALGOSCOPE_IMPLEMENTATION_PROMPT.md)
+- Architecture notes: [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)

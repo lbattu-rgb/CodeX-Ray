@@ -1,8 +1,8 @@
-# CodeX-Ray PRD
+# AlgoScope PRD
 
 ## 1. Document Control
 
-- Product: CodeX-Ray
+- Product: AlgoScope
 - Version: 1.0
 - Date: 2026-03-31
 - Status: Build-ready PRD for MVP + competition-grade v2
@@ -11,7 +11,7 @@
 
 ## 2. Executive Summary
 
-CodeX-Ray is an interactive code intelligence platform for algorithm understanding. A user pastes code and immediately gets:
+AlgoScope is an interactive code intelligence platform for algorithm understanding. A user pastes code and immediately gets:
 
 - structural decomposition of the algorithm
 - step-by-step execution playback
@@ -22,7 +22,7 @@ CodeX-Ray is an interactive code intelligence platform for algorithm understandi
 - side-by-side comparison across implementations
 - teaching-oriented explanations tied to actual program behavior
 
-The product is intentionally positioned beyond a basic visualizer. Existing tools like Python Tutor focus on execution tracing, while complexity tools and linters focus on static metrics or style. CodeX-Ray combines static analysis, trace generation, growth modeling, optimization guidance, and human-readable explanation in one workflow.
+The product is intentionally positioned beyond a basic visualizer. Existing tools like Python Tutor focus on execution tracing, while complexity tools and linters focus on static metrics or style. AlgoScope combines static analysis, trace generation, growth modeling, optimization guidance, and human-readable explanation in one workflow.
 
 ## 3. Product Vision
 
@@ -52,7 +52,7 @@ Developers do not struggle only because code is hard to read. They struggle beca
 - bottleneck dominance
 - implementation tradeoffs
 
-Most tools expose one layer at a time. CodeX-Ray exposes all of them together in a coherent, interactive model.
+Most tools expose one layer at a time. AlgoScope exposes all of them together in a coherent, interactive model.
 
 ## 5. Problem Statement
 
@@ -77,7 +77,7 @@ There is no widely accessible tool that unifies:
 
 ## 6. Opportunity and Differentiation
 
-CodeX-Ray will compete in an adjacent space with:
+AlgoScope will compete in an adjacent space with:
 
 - execution visualizers
 - static analysis tools
@@ -87,7 +87,7 @@ CodeX-Ray will compete in an adjacent space with:
 
 ### Market gap
 
-Those categories are usually separated. CodeX-Ray fills the gap between:
+Those categories are usually separated. AlgoScope fills the gap between:
 
 - "show me the steps"
 - "estimate how it scales"
@@ -1202,8 +1202,8 @@ Codex should treat this PRD as a staged execution plan.
 
 ## 27. One-Sentence Product Pitch
 
-CodeX-Ray is an algorithm intelligence platform that lets you see, predict, compare, and reshape code behavior before performance problems become invisible bugs.
+AlgoScope is an algorithm intelligence platform that lets you see, predict, compare, and reshape code behavior before performance problems become invisible bugs.
 
 ## 28. Judge-Facing Short Pitch
 
-Most tools either show what code does or measure what already happened. CodeX-Ray does both, then goes further by predicting scalability, identifying bottlenecks, explaining tradeoffs, and showing how tiny code changes reshape algorithm behavior.
+Most tools either show what code does or measure what already happened. AlgoScope does both, then goes further by predicting scalability, identifying bottlenecks, explaining tradeoffs, and showing how tiny code changes reshape algorithm behavior.

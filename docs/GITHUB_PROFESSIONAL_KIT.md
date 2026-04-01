@@ -75,7 +75,7 @@ Use this exact order:
 
 Use names like:
 
-- `codex-ray`
+- `algoscope`
 - `uncertainty-aware-ai`
 - `gene-visual-intelligence`
 - `algorithm-xray`

@@ -1,6 +1,6 @@
-# Codex Implementation Prompt for CodeX-Ray
+# Codex Implementation Prompt for AlgoScope
 
-Build CodeX-Ray as a polished full-stack web application using the PRD at [CODEX_RAY_PRD.md](/Users/likhithabattu/Documents/Personal Projects/CodeX-Ray/CODEX_RAY_PRD.md) as the source of truth.
+Build AlgoScope as a polished full-stack web application using the PRD at [ALGOSCOPE_PRD.md](./ALGOSCOPE_PRD.md) as the source of truth.
 
 ## Your role
 
@@ -8,7 +8,7 @@ Act as the lead engineer for this product. Do not treat this as a toy demo. Trea
 
 ## Product intent
 
-CodeX-Ray must feel meaningfully different from a basic execution visualizer. The product should combine:
+AlgoScope must feel meaningfully different from a basic execution visualizer. The product should combine:
 
 - structural code analysis
 - step-by-step execution tracing

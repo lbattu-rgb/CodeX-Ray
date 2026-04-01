@@ -11,7 +11,7 @@ I build ambitious software across machine learning, developer tools, and full-st
 
 ## Featured Work
 
-### CodeX-Ray
+### AlgoScope
 
 An algorithm intelligence platform that visualizes execution, predicts complexity, simulates runtime growth, highlights bottlenecks, and compares implementations.
 

@@ -10,7 +10,7 @@ from .engines.simulation import build_simulation
 from .engines.trace_engine import generate_trace
 
 
-app = FastAPI(title="CodeX-Ray API", version="0.1.0")
+app = FastAPI(title="AlgoScope API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,

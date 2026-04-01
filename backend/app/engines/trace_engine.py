@@ -45,7 +45,7 @@ def _stack_snapshot(frame: FrameType | None) -> list[dict[str, Any]]:
     stack = []
     current = frame
     while current is not None:
-        if current.f_code.co_filename == "<codex-ray-user-code>":
+        if current.f_code.co_filename == "<algoscope-user-code>":
             stack.append(
                 {
                     "function": current.f_code.co_name,
@@ -64,10 +64,10 @@ def generate_trace(source: str, entry_function: str | None, args: list[Any], kwa
     globals_dict: dict[str, Any] = {"__builtins__": SAFE_BUILTINS}
     locals_dict = globals_dict
 
-    compiled = compile(source, "<codex-ray-user-code>", "exec")
+    compiled = compile(source, "<algoscope-user-code>", "exec")
 
     def tracer(frame: FrameType, event: str, arg: Any):  # type: ignore[override]
-        if frame.f_code.co_filename != "<codex-ray-user-code>":
+        if frame.f_code.co_filename != "<algoscope-user-code>":
             return tracer
         if len(events) >= max_events:
             raise RuntimeError("Trace limit reached")

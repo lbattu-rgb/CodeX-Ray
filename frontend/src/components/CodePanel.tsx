@@ -13,7 +13,7 @@ type CodePanelProps = {
 };
 
 function defineTheme(monaco: typeof Monaco) {
-  monaco.editor.defineTheme("codex-ray-xray", {
+  monaco.editor.defineTheme("algoscope-xray", {
     base: "vs",
     inherit: true,
     rules: [
@@ -59,7 +59,7 @@ export function CodePanel({
     editorRef.current = editor;
     monacoRef.current = monaco;
     defineTheme(monaco);
-    monaco.editor.setTheme("codex-ray-xray");
+    monaco.editor.setTheme("algoscope-xray");
   };
 
   useEffect(() => {
@@ -131,7 +131,7 @@ export function CodePanel({
           value={source}
           onMount={handleMount}
           onChange={(value) => onSourceChange(value ?? "")}
-          theme="codex-ray-xray"
+          theme="algoscope-xray"
           options={{
             minimap: { enabled: true },
             fontSize: 15,

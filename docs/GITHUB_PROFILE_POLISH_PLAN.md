@@ -10,7 +10,7 @@
 
 ## Pinned Repo Mix Recommendation
 
-1. `CodeX-Ray`
+1. `AlgoScope`
 2. Best ML project
 3. Best full-stack app
 4. Best data or visualization project

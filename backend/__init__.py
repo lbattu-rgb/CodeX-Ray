@@ -1,1 +1,1 @@
-"""Backend package for CodeX-Ray."""
+"""Backend package for AlgoScope."""

@@ -305,7 +305,7 @@ export default function App() {
         <div className="brand-lockup">
           <span className="brand-mark">CX</span>
           <div>
-            <strong>CodeX-Ray</strong>
+            <strong>AlgoScope</strong>
             <p>Algorithm intelligence studio</p>
           </div>
         </div>
@@ -350,7 +350,7 @@ export default function App() {
             </div>
           </div>
           <p className="hero-copy">
-            CodeX-Ray turns algorithms into something you can inspect visually: execution, growth, hotspots,
+            AlgoScope turns algorithms into something you can inspect visually: execution, growth, hotspots,
             tradeoffs, and structural behavior all in one place.
           </p>
           <div className="hero-actions">
@@ -491,7 +491,7 @@ export default function App() {
             <p className="eyebrow">Best Demo Flow</p>
             <h2>Start with bad code. Show the hotspot. Rewrite one thing. Watch the pressure change.</h2>
             <p className="hero-copy">
-              The fastest way to understand CodeX-Ray is to use it like a before-and-after machine. Show a naive
+              The fastest way to understand AlgoScope is to use it like a before-and-after machine. Show a naive
               implementation first, then make one better choice and let the product explain the difference.
             </p>
             <div className="demo-flow-grid">
@@ -777,7 +777,7 @@ export default function App() {
             <p className="eyebrow">Insights</p>
             <h2>Trace the code, inspect the bottlenecks, and understand the growth curve.</h2>
             <p className="section-support-copy">
-              A bottleneck is what happens when a lot of work tries to pass through a tiny expensive region. CodeX-Ray
+              A bottleneck is what happens when a lot of work tries to pass through a tiny expensive region. AlgoScope
               helps you see where the flow gets squeezed.
             </p>
           </div>
@@ -910,7 +910,7 @@ export default function App() {
 
       <footer className="site-footer reveal-on-scroll">
         <div>
-          <p className="eyebrow">CodeX-Ray</p>
+          <p className="eyebrow">AlgoScope</p>
           <h3>Algorithm intelligence for people who want more than just “it works.”</h3>
         </div>
         <p>

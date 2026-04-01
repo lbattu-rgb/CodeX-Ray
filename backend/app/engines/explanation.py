@@ -18,7 +18,7 @@ def build_explanations(analysis: dict[str, Any]) -> dict[str, str]:
         concise.append(f"Top optimization opportunity: {suggestions[0]['title'].lower()}.")
 
     teaching = [
-        "CodeX-Ray reads the program structure first, then estimates how much work grows as the input grows.",
+        "AlgoScope reads the program structure first, then estimates how much work grows as the input grows.",
         complexity["explanation"],
     ]
     if top_hotspot:
